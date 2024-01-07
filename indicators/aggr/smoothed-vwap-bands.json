@@ -1,0 +1,21 @@
+{
+  "type": "indicator",
+  "name": "indicator:Smoothed VWAP Bands",
+  "data": {
+    "createdAt": 1647173400001,
+    "options": {
+      "priceScaleId": "right",
+      "showBands": true,
+      "length": 200,
+      "bandMultiplier": 2,
+      "showClose": true,
+      "showHLArea": true,
+      "color": "rgb(255,255,255)",
+      "higherLineColor": "rgb(41,98,255)",
+      "lowerLineColor": "rgb(41,98,255)",
+      "negativeColor": "rgba(41,98,255,0.2)",
+      "positiveColor": "rgba(41,98,255,0.2)"
+    },
+    "script": "var vol = vbuy + vsell\nvar length = options.length || 200\n\nvar volSma = sma(vol, options.length)\nvar srcVolSmaClose = sma($price.close * vol, options.length)\nvar srcVolSmaHigh = sma($price.high * vol, options.length)\nvar srcVolSmaLow = sma($price.low * vol, options.length)\nvwapHighClose = srcVolSmaClose / volSma \nvwapHighHigh = srcVolSmaHigh / volSma \nvwapHighLow = srcVolSmaLow / volSma \n\nif (options.showHLArea) {\n  cloudarea(vwapHighHigh, vwapHighLow)\n}\n\nif (options.showClose) {\n  line(vwapHighClose)\n}\n\nif (options.showBands) {\n  var srcSrcVolSmaClose = sma(vol * Math.pow($price.close, 2), options.length)\n  var srcSrcVolSmaHigh = sma(vol * Math.pow($price.high, 2), options.length)\n  var srcSrcVolSmaLow = sma(vol * Math.pow($price.low, 2), options.length)\n  var stDevHighClose = Math.sqrt(srcSrcVolSmaClose / volSma - Math.pow(vwapHighClose, 2))\n  var stDevHighHigh = Math.sqrt(srcSrcVolSmaHigh / volSma - Math.pow(vwapHighHigh, 2))\n  var stDevHighLow = Math.sqrt(srcSrcVolSmaLow / volSma - Math.pow(vwapHighLow, 2))\n\n  if (options.showHLArea) {\n    cloudarea(vwapHighLow - stDevHighLow * options.bandMultiplier, vwapHighHigh - stDevHighHigh * options.bandMultiplier)\n    cloudarea(vwapHighLow + stDevHighLow * options.bandMultiplier, vwapHighHigh + stDevHighHigh * options.bandMultiplier)\n  }\n\n  if (options.showClose) {\n    line(vwapHighClose - stDevHighClose * options.bandMultiplier)\n    line(vwapHighClose + stDevHighClose * options.bandMultiplier)\n  }\n}"
+  }
+}

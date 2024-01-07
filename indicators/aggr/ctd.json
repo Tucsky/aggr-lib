@@ -1,0 +1,14 @@
+{
+  "type": "indicator",
+  "name": "indicator:CTD",
+  "data": {
+    "createdAt": 1623024000000,
+    "script": "line(cum(cbuy-csell))",
+    "description": "Cumulative Trades Delta",
+    "options": {
+      "priceScaleId": "ctd",
+      "lineStyle": 4,
+      "lineWidth": 1
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "indicator",
+  "name": "indicator:Volume",
+  "data": {
+    "createdAt": 1623024000000,
+    "name": "Volume",
+    "description": "Volume + delta",
+    "script": "if (upColor === 0) {\n  if (options.showDelta) {\n    upColor = options.upBgColor\n    downColor = options.downBgColor\n  } else {\n    upColor = options.upColor\n    downColor = options.downColor\n  }\n}\n\nif (options.showDelta) {\n  histogram({ time: time, value: Math.abs(vbuy-vsell), color: vbuy - vsell > 0 ? options.upColor : options.downColor})\n}\n\nhistogram({ time: time, value: vbuy + vsell, color: vbuy > vsell ? upColor : downColor })",
+    "options": {
+      "priceFormat": {
+        "type": "volume"
+      },
+      "upColor": "rgb(59,202,109)",
+      "downColor": "rgb(235,30,47)",
+      "priceScaleId": "volume",
+      "scaleMargins": {
+        "top": 0.84,
+        "bottom": 0
+      },
+      "showDelta": true,
+      "upBgColor": "rgba(59,202,109,0.5)",
+      "downBgColor": "rgba(235,30,47,0.5)"
+    }
+  }
+}

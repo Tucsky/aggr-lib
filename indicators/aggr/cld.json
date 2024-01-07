@@ -1,0 +1,21 @@
+{
+  "type": "indicator",
+  "name": "indicator:CLD",
+  "data": {
+    "createdAt": 1623024000000,
+    "script": "line(cum(lbuy-lsell))",
+    "description": "Cumulative Liquidations Delta",
+    "options": {
+      "priceFormat": {
+        "type": "volume"
+      },
+      "color": "rgb(156,39,176)",
+      "priceScaleId": "ctd",
+      "lineWidth": 1,
+      "scaleMargins": {
+        "top": 0.75,
+        "bottom": 0.17
+      }
+    }
+  }
+}

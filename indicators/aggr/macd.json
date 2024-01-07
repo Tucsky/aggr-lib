@@ -1,0 +1,20 @@
+{
+  "type": "indicator",
+  "name": "indicator:MACD",
+  "data": {
+    "createdAt": 1697138760001,
+    "description": "A trend-following momentum indicator that shows the relationship between two exponential moving averages (EMAs) of a security's price",
+    "options": {
+        "priceScaleId": "macd",
+        "MACDLength": 14,
+        "scaleMargins": {
+          "top": 0.53,
+          "bottom": 0.1
+        },
+        "visible": true,
+        "negativeColor": "rgb(242,54,69)",
+        "positiveColor": "rgba(76,175,80,0.91)"
+    },
+    "script": "// source: https://www.investopedia.com/terms/m/macd.asp\n\nconst MACD = ema($price.close, 12) - ema($price.close, 26)\nconst signalLine = ema(MACD, 9)\n\nline(signalLine, color=red)\nline(MACD, color=blue)\n\nconst histoValue = (MACD - signalLine)\nhistoValue > 0 ? histogram(histoValue, color=green) : histogram(histoValue, color=red)"
+  }
+}

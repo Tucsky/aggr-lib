@@ -1,0 +1,26 @@
+{
+  "type": "indicator",
+  "name": "indicator:Price",
+  "data": {
+    "createdAt": 1623024000000,
+    "script": "var ohlc = options.useHeikinAshi ? \n    avg_heikinashi(bar) : \n    options.useGaps ? \n    avg_ohlc_with_gaps(bar) : \n    avg_ohlc(bar)\n\nplotcandlestick(ohlc)",
+    "options": {
+      "priceScaleId": "right",
+      "priceFormat": {
+        "auto": true,
+        "precision": 1
+      },
+      "priceLineVisible": true,
+      "lastValueVisible": true,
+      "borderVisible": true,
+      "upColor": "rgb(59,202,109)",
+      "downColor": "rgb(214,40,40)",
+      "borderUpColor": "rgb(59,202,109)",
+      "borderDownColor": "rgb(239,67,82)",
+      "wickUpColor": "rgb(223,211,144)",
+      "wickDownColor": "rgb(239,67,82)",
+      "useGaps": false,
+      "useHeikinAshi": false
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "indicator",
+  "name": "indicator:VWAP Bands {length}",
+  "data": {
+    "createdAt": 1647173400001,
+    "options": {
+      "priceScaleId": "right",
+      "stdevMultiplier": 1.5,
+      "stdevSecondaryMultiplier": 2,
+      "buyBgColor": "rgba(255,255,255,0.15)",
+      "buyColor": "rgba(255,255,255,0.47)",
+      "sellBgColor": "rgba(255,255,255,0.15)",
+      "sellColor": "rgba(255,255,255,0.55)",
+      "dblBuyBgColor": "rgba(255,255,255,0.15)",
+      "dblBuyColor": "rgba(255,255,255,0.5)",
+      "dblSellBgColor": "rgba(255,255,255,0.15)",
+      "dblSellColor": "rgba(255,255,255,0.53)",
+      "length": 100,
+      "showDouble": true
+    },
+    "script": "var price = $price\nvar src = (price.high + price.low + price.close)/3\n\nvar sumSell = sum(vsell, options.length)\nvar sumSrcSell = sum(src * vsell, options.length)\nvar sumSrcSrcSell = sum(vsell*Math.pow(src, 2), options.length)\nvar VWAPSell = sumSrcSell / sumSell \nvar varianceSell = sumSrcSrcSell / sumSell - Math.pow(VWAPSell, 2)\nvar stDevSell = Math.sqrt(varianceSell < 0 ? 0 : varianceSell)\nvar sumBuy = sum(vbuy, options.length)\nvar sumSrcBuy = sum(src * vbuy, options.length)\nvar sumSrcSrcBuy = sum(vbuy*Math.pow(src, 2), options.length)\nvar VWAPBuy = sumSrcBuy / sumBuy \nvar varianceBuy = sumSrcSrcBuy / sumBuy - Math.pow(VWAPBuy, 2)\nvar stDevBuy = Math.sqrt(varianceBuy < 0 ? 0 : varianceBuy)\n\nvar thresholdDown = VWAPBuy - stDevBuy * options.stdevMultiplier\nvar thresholdUp = VWAPSell + stDevSell * options.stdevMultiplier\n\ncloudarea(\n  VWAPSell - stDevSell * options.stdevMultiplier,\n  thresholdDown,\n  positiveColor=options.buyBgColor,\n  negativeColor=options.buyBgColor,\n  higherLineColor=options.buyColor,\n  lowerLineColor=options.buyColor)\n\ncloudarea(thresholdUp,\n  VWAPBuy + stDevBuy * options.stdevMultiplier,\n  positiveColor=options.sellBgColor,\n  negativeColor=options.sellBgColor,\n  higherLineColor=options.sellColor,\n  lowerLineColor=options.sellColor)\n\nvar na = { time: time }\n\nif (options.showDouble) {\n  cloudarea(\n    VWAPSell - stDevSell * options.stdevSecondaryMultiplier,\n    thresholdDown,\n    positiveColor=options.dblBuyBgColor,\n    negativeColor=options.dblBuyBgColor,\n    higherLineColor=options.dblBuyColor,\n    lowerLineColor=options.dblBuyColor\n  )\n  \n  cloudarea(\n   thresholdUp,\n   VWAPBuy + stDevBuy * options.stdevSecondaryMultiplier,\n    positiveColor=options.dblSellBgColor,\n    negativeColor=options.dblSellBgColor,\n    higherLineColor=options.dblSellColor,\n    lowerLineColor=options.dblSellColor\n  )\n}"
+  }
+}

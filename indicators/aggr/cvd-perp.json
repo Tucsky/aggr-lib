@@ -1,0 +1,16 @@
+{
+  "type": "indicator",
+  "name": "indicator:CVD PERP",
+  "data": {
+    "createdAt": 1623024000000,
+    "description": "CVD selected perp markets",
+    "script": "buyVol = source(vbuy, type=perp)\nsellVol = source(vsell, type=perp)\nline(cum(buyVol - sellVol), title=PERP)",
+    "options": {
+      "priceFormat": {
+        "type": "volume"
+      },
+      "priceScaleId": "cvdperp",
+      "color": "#42a5f5"
+    }
+  }
+}

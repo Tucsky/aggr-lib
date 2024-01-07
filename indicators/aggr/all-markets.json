@@ -1,0 +1,12 @@
+{
+  "type": "indicator",
+  "name": "indicator:All markets",
+  "data": {
+    "createdAt": 1623024000000,
+    "script": "line(BITFINEX:BTCUSD.close, color=#97c554, title=Bitfinex.spot)\nline(BINANCE:btcusdt.close, color=#f3ba2f, title=Binance.spot)\nline(OKEX:BTC-USDT.close, color=#5894f2, title=Okex.spot)\nline(KRAKEN:XBT/USD.close, color=#5841d8, title=Kraken.spot)\nline(COINBASE:BTC-USD.close, color=#0e70e2, title=Coinbase.spot)\nline(POLONIEX:BTC_USDT.close, color=#858b8f, title=Poloniex.spot)\nline(HUOBI:btcusdt.close, color=#2ca6e0, title=Huobi.spot)\nline(BITSTAMP:btcusd.close, color=#169f4a, title=Bitstamp.spot)\nline(BITMEX:XBTUSD.close, color=#595fb5, title=Bitmex.perp)\nline(BITFINEX:BTCF0:USTF0.close, color=#97c554, title=Bitfinex.perp)\nline(OKEX:BTC-USD-SWAP.close, color=#5894f2, title=Okex.perp)\nline(BINANCE_FUTURES:btcusdt.close, color=#f3ba2f, title=Binance.perp)\nline(BINANCE_FUTURES:btcusd_perp.close, color=#f3ba2f, title=Binance.perp)\nline(HUOBI:BTC-USD.close, color=#2ca6e0, title=Huobi.perp)\nline(KRAKEN:PI_XBTUSD.close, color=#5841d8, title=Kraken.perp)\nline(DERIBIT:BTC-PERPETUAL.close, color=#2dae9a, title=Deribit.perp)\nline(FTX:BTC-PERP.close, color=#02a6c2, title=Ftx.perp)\nline(BYBIT:BTCUSD.close, color=#f9b600, title=Bybit.perp)",
+    "description": "Multiple markets at once",
+    "options": {
+      "priceScaleId": "right"
+    }
+  }
+}

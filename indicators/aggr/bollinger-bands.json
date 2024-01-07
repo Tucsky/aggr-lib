@@ -1,0 +1,19 @@
+{
+  "type": "indicator",
+  "name": "indicator:Bollinger Bands",
+  "data": {
+    "createdAt": 1623024000000,
+    "script": "a = sma(Math.pow($price.close,2),options.length)\nb = Math.pow(sum($price.close,options.length),2)/Math.pow(options.length,2)\nstdev = Math.sqrt(a - b)\nsrc = $price.close\n\nbasis = sma($price.close, options.length)\ndev = options.mult * stdev\nupper = basis + dev\nlower = basis - dev\n\nline(basis, color=options.basisColor)\nplotcloudarea(lower, upper)",
+    "options": {
+      "priceScaleId": "right",
+      "mult": 2,
+      "length": 20,
+      "lineStyle": 2,
+      "basisColor": "rgba(129,199,132,0.5)",
+      "positiveColor": "rgba(0,0,0,0.1)",
+      "negativeColor": "rgba(0,0,0,0.1)",
+      "lowerLineColor": "rgb(129,199,132)",
+      "higherLineColor": "rgb(129,199,132)"
+    }
+  }
+}
