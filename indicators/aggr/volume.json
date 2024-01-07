@@ -1,25 +1,30 @@
 {
-  "type": "indicator",
-  "name": "indicator:Volume",
+  "type": "indicators",
+  "name": "indicators:Volume",
   "data": {
-    "createdAt": 1623024000000,
+    "id": "volume",
     "name": "Volume",
-    "description": "Volume + delta",
-    "script": "if (upColor === 0) {\n  if (options.showDelta) {\n    upColor = options.upBgColor\n    downColor = options.downBgColor\n  } else {\n    upColor = options.upColor\n    downColor = options.downColor\n  }\n}\n\nif (options.showDelta) {\n  histogram({ time: time, value: Math.abs(vbuy-vsell), color: vbuy - vsell > 0 ? options.upColor : options.downColor})\n}\n\nhistogram({ time: time, value: vbuy + vsell, color: vbuy > vsell ? upColor : downColor })",
     "options": {
+      "priceScaleId": "volume",
       "priceFormat": {
         "type": "volume"
       },
       "upColor": "rgb(59,202,109)",
       "downColor": "rgb(235,30,47)",
-      "priceScaleId": "volume",
       "scaleMargins": {
-        "top": 0.84,
+        "top": 0.86,
         "bottom": 0
       },
       "showDelta": true,
       "upBgColor": "rgba(59,202,109,0.5)",
-      "downBgColor": "rgba(235,30,47,0.5)"
-    }
+      "downBgColor": "rgba(235,30,47,0.5)",
+      "visible": true
+    },
+    "script": "if (upColor === 0) {\n  if (options.showDelta) {\n    upColor = options.upBgColor\n    downColor = options.downBgColor\n  } else {\n    upColor = options.upColor\n    downColor = options.downColor\n  }\n}\n\nif (options.showDelta) {\n  plothistogram({ time: time, value: Math.abs(vbuy-vsell), color: vbuy - vsell > 0 ? options.upColor : options.downColor})\n}\n\nplothistogram({ time: time, value: vbuy + vsell, color: vbuy > vsell ? upColor : downColor })",
+    "createdAt": 1690189732678,
+    "updatedAt": 1704511051229,
+    "displayName": "Volume",
+    "description": "Volume + delta!",
+    "author": "aggr"
   }
 }
