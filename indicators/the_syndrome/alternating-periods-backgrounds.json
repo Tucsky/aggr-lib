@@ -1,0 +1,27 @@
+{
+  "type": "indicators",
+  "name": "indicators:Alternating periods backgrounds",
+  "data": {
+    "id": "alternating-periods-backgrounds",
+    "name": "Alternating periods backgrounds",
+    "options": {
+      "priceScaleId": "right",
+      "barCount": null,
+      "visible": true,
+      "highlightColor": "rgba(255,255,255,0.05)",
+      "baseLineVisible": false,
+      "lastValueVisible": false,
+      "priceLineVisible": false,
+      "scaleMargins": {
+        "top": 0.04,
+        "bottom": 0.26
+      }
+    },
+    "script": "var barCount = options.barCount || 24;\nvar highlighted = (bar.length % (barCount * 2)) > barCount;\nif (highlighted) {\n  brokenarea(\n    $price.close - $price.close,\n    $price.close + $price.close,\n    color=(options.highlightColor || \"rgba(255, 255, 255, 0.05)\")\n  );\n}",
+    "createdAt": 1704843848569,
+    "updatedAt": 1704843911852,
+    "displayName": "Alternating periods backgrounds",
+    "description": "Every X number of bars alternate the background color. For example if viewing 1min chart and barCount is 60 each hour the background color will change. It works best with subtle background colors and RGBA so the user can set the transparency and see through it. Author discord: the_syndrome",
+    "author": "the_syndrome"
+  }
+}
