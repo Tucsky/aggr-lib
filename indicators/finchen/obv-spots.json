@@ -1,0 +1,33 @@
+{
+  "type": "indicators",
+  "name": "indicators:OBV spots",
+  "data": {
+    "id": "obv-spots",
+    "name": "OBV spots",
+    "options": {
+      "priceScaleId": "obv-copy-1",
+      "visible": true,
+      "scaleMargins": {
+        "top": 0.64,
+        "bottom": 0
+      },
+      "lineStyle": 1,
+      "color": "rgba(255,235,59,0.81)",
+      "bodyPercentWatch": 0.3,
+      "wickDiffPercent": 90,
+      "debug": null,
+      "toggleDebug": true,
+      "toggleVolumeWick": false,
+      "wickRatioThreshold": 1.5,
+      "togglePrintNormalObv": true,
+      "originalObvColor": "rgb(178,181,190)",
+      "refinedObvColor": "rgb(41,98,255)"
+    },
+    "script": "if (markers === 0) {\r\n  // first script execution (0 is default values for all persistent variables)\r\n\r\n  // create a var to store already drawn markers\r\n  markers = []\r\n\r\n  // contain the last marker that can change as the bar update\r\n  repaintableMarker = null\r\n\r\n  // if candle body has a price percent change less than bodyPercentWatch, we start a refinement\r\n  bodyPercentWatch = options.bodyPercentWatch || 0.3\r\n\r\n  // if a wick is x times greater than the other, we might use it to refine change the side\r\n  wickRatioThreshold = options.wickRatioThreshold || 1.5\r\n\r\n  // paint a marker when OBV has been refined (changed of direction)\r\n  toggleDebug = options.toggleDebug || false\r\n\r\n  // when on, we calculate the wick percent difference and keep only that volume to add to OBV\r\n  toggleVolumeWick = options.toggleVolumeWick || false\r\n\r\n  togglePrintNormalObv = options.togglePrintNormalObv || false\r\n}\r\nif (repaintableMarker && repaintableMarker.time < time) {\r\n  // bar is +1 since active marker was added, lock it in the array\r\n  markers.push(repaintableMarker)\r\n\r\n  // free up active marker\r\n  repaintableMarker = null\r\n}\r\n\r\nvar newMarker = null\r\nvar _vbuy = source(vbuy, type=spot)\r\nvar _vsell = source(vsell, type=spot)\r\nvar _open = $price.open\r\nvar _high = $price.high\r\nvar _low = $price.low\r\nvar _close = $price.close\r\n\r\nvar sign = _close > _open ? 1 : -1\r\nvar volume = _vbuy + _vsell\r\n\r\nvar bodySize = Math.abs(_close - _open)\r\nvar priceChange = (_close - _open) / _open // Percentage change\r\n\r\nif (togglePrintNormalObv) {\r\n  plotline(cum(sign * volume), title='Original', color=options.originalObvColor)\r\n}\r\n\r\nvar improved = false\r\n\r\n// Check if price change is less than 0.4%\r\nif (Math.abs(priceChange) < bodyPercentWatch / 100) {\r\n  var upperWickSize = _high - _close\r\n  var lowerWickSize = _close - _low\r\n\r\n  // Calculate the thresholds\r\n  var upperWickThreshold = wickRatioThreshold * lowerWickSize\r\n  var lowerWickThreshold = wickRatioThreshold * upperWickSize\r\n\r\n  // Check if upper and lower wicks have similar sizes\r\n  if (upperWickSize < upperWickThreshold && lowerWickSize < lowerWickThreshold) {\r\n    // Neutral move, don't add volume\r\n    sign = 0\r\n    improved = true\r\n  } else {\r\n    // Calculate the thresholds\r\n    var upperWickThreshold = wickRatioThreshold * lowerWickSize\r\n    var lowerWickThreshold = wickRatioThreshold * upperWickSize\r\n\r\n    // Determine the side based on wick sizes\r\n    // upper: 500, lower 100\r\n    if (upperWickSize > upperWickThreshold) {\r\n      improved = sign !== -1\r\n      // More selling happened, add volume as negative\r\n      sign = -1\r\n      if (toggleVolumeWick) {\r\n        improved = true\r\n        var percentageDifference = (upperWickSize - lowerWickSize) / upperWickSize\r\n        volume = percentageDifference * volume\r\n      }\r\n    } else if (lowerWickSize > lowerWickThreshold) {\r\n      improved = sign !== 1\r\n      // More buying happened, add volume as positive\r\n      sign = 1\r\n      if (toggleVolumeWick) {\r\n        improved = true\r\n        var percentageDifference = (lowerWickSize - upperWickSize) / lowerWickSize\r\n        volume = percentageDifference * volume\r\n      }\r\n    }\r\n  }\r\n\r\n  if (improved && toggleDebug) {\r\n    if (sign == -1) {\r\n      // newMarker is a temporary variable (not included in the indicator state)\r\n      // to avoid it being treated as persistent variable we wrap it inside parenthesis\r\n      newMarker = {\r\n        time: time,\r\n        position: 'aboveBar',\r\n        color: 'red',\r\n        shape: 'arrowDown',\r\n      }\r\n    }\r\n\r\n    if (sign == 1) {\r\n      newMarker = {\r\n        time: time,\r\n        position: 'belowBar',\r\n        color: 'lime',\r\n        shape: 'arrowUp',\r\n      }\r\n    }\r\n  }\r\n}\r\n\r\nif (newMarker || (repaintableMarker && !newMarker)) {\r\n  // override persistent variable repaintable marker\r\n  repaintableMarker = newMarker\r\n\r\n  var index = togglePrintNormalObv ? 1 : 0\r\n\r\n  if (series[index].setMarkers) {\r\n    series[index].setMarkers(markers.concat(repaintableMarker))\r\n  }\r\n}\r\n\r\nvar obv = cum(sign * volume)\r\nplotline(obv, title=\"Refined\", color=options.refinedObvColor)",
+    "createdAt": 1701126053261,
+    "updatedAt": 1704842942708,
+    "displayName": "OBV spots",
+    "description": null,
+    "author": "finchen"
+  }
+}
