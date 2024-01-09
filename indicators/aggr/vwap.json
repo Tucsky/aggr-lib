@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:VWAP",
   "data": {
-    "createdAt": 1647173400000,
+    "createdAt": 1647173400001,
     "script": "var src = ($price.high + $price.low + $price.close)/3\nvar vol=vbuy+vsell\nvar sumVol = cum(vol)\nvar sumSrcVol = cum(src * vol)\nvar sumSrcSrcVol = cum(vol*Math.pow(src, 2))\nvar VWAP = sumSrcVol / sumVol \nvar variance = sumSrcSrcVol / sumVol - Math.pow(VWAP, 2)\nvar stDev = Math.sqrt(variance < 0 ? 0 : variance)\n\t\nline(VWAP)\ncloudarea(VWAP - stDev * options.stdevMultiplier, VWAP + stDev * options.stdevMultiplier)\n\nvar unixDays = bar.timestamp / 60 / 60 / 24 + 3\nif (unixDays % (options.sessionLengthInDays) === 0) {\n  fns[0].state = {}\n  fns[1].state = {}\n  fns[2].state = {}\n}",
     "name": "VWAP",
     "options": {

@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:Ichimoku",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "script": "conversionLine=(lowest($price.low, options.conversionLineLength) + highest($price.high, options.conversionLineLength)) / 2\nbaseLine=(lowest($price.low, options.baseLineLength) + highest($price.high, options.baseLineLength)) / 2\nleadLineOne=(conversionLine + baseLine) / 2\nleadLineTwo=(lowest($price.low, options.laggingSpanTwoLength) + highest($price.high, options.laggingSpanTwoLength)) / 2\nplotcloudarea(leadLineTwo, leadLineOne, offset=options.displacement)",
     "options": {
       "baseLineLength": 26,

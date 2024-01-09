@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:SHM",
   "data": {
-    "createdAt": 1658483940001,
+    "createdAt": 1658483940000,
     "options": {
       "priceScaleId": "shm",
       "stochMultiplier": 1,

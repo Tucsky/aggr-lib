@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:Liquidations",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "name": "Liquidations",
     "description": "Liquidations by side",
     "script": "histogram(lbuy, color=options.upColor)\nhistogram(-lsell, color=options.downColor)",

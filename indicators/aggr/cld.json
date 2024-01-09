@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:CLD",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "script": "line(cum(lbuy-lsell))",
     "description": "Cumulative Liquidations Delta",
     "options": {

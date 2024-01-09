@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:CTD",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "script": "line(cum(cbuy-csell))",
     "description": "Cumulative Trades Delta",
     "options": {

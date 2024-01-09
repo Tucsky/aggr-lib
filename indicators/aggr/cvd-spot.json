@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:CVD SPOT",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "description": "CVD selected spot markets",
     "script": "buyVol = source(vbuy, type=spot)\nsellVol = source(vsell, type=spot)\nline(cum(buyVol - sellVol), title=SPOT)",
     "options": {

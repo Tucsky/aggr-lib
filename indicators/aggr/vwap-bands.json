@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:VWAP Bands {length}",
   "data": {
-    "createdAt": 1647173400001,
+    "createdAt": 1647173400000,
     "options": {
       "priceScaleId": "right",
       "stdevMultiplier": 1.5,

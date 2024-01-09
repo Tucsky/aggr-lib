@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:Liquidation Heatmap",
   "data": {
-    "createdAt": 1703543399434,
+    "createdAt": 1703543399433,
     "options": {
       "priceScaleId": "right"
     },

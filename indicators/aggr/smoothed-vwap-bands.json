@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:Smoothed VWAP Bands",
   "data": {
-    "createdAt": 1647173400001,
+    "createdAt": 1647173400000,
     "options": {
       "priceScaleId": "right",
       "showBands": true,

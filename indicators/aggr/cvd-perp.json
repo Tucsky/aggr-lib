@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:CVD PERP",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "description": "CVD selected perp markets",
     "script": "buyVol = source(vbuy, type=perp)\nsellVol = source(vsell, type=perp)\nline(cum(buyVol - sellVol), title=PERP)",
     "options": {

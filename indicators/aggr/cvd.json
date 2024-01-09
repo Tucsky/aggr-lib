@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:CVD",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "name": "CVD",
     "description": "Cumulative Volume Delta",
     "script": "line(cum(vbuy - vsell))",

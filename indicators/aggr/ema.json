@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:EMA",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "name": "EMA {fastLength} {mediumLength} {slowLength}",
     "displayName": "EMA 50 100 200",
     "script": "line(ema($price.close, options.fastLength), color=options.fastColor)\nline(ema($price.close, options.mediumLength), color=options.mediumColor)\nline(ema($price.close, options.slowLength), color=options.slowColor)",

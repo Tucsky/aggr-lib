@@ -2,7 +2,7 @@
   "type": "indicator",
   "name": "indicator:Price",
   "data": {
-    "createdAt": 1623024000000,
+    "createdAt": 1623024000001,
     "script": "var ohlc = options.useHeikinAshi ? \n    avg_heikinashi(bar) : \n    options.useGaps ? \n    avg_ohlc_with_gaps(bar) : \n    avg_ohlc(bar)\n\nplotcandlestick(ohlc)",
     "options": {
       "priceScaleId": "right",
