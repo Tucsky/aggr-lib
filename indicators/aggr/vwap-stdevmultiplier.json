@@ -1,0 +1,31 @@
+{
+  "type": "indicators",
+  "name": "indicators:VWAP {stdevMultiplier}",
+  "data": {
+    "id": "vwap-stdevmultiplier",
+    "name": "VWAP {stdevMultiplier}",
+    "options": {
+      "priceScaleId": "right",
+      "stdevMultiplier": 1.618,
+      "color": "rgb(242,54,69)",
+      "sessionLengthInDays": 1,
+      "visible": true,
+      "positiveColor": "rgba(0,0,0,0.05)",
+      "negativeColor": "rgba(0,0,0,0.05)",
+      "lowerLineColor": "rgb(255,255,255)",
+      "higherLineColor": "rgb(255,255,255)",
+      "scaleMargins": {
+        "top": 0.08,
+        "bottom": 0.26
+      },
+      "higherLineWidth": 1,
+      "lineWidth": 2
+    },
+    "script": "var src = ($price.high + $price.low + $price.close)/3\nvar vol=vbuy+vsell\nvar sumVol = cum(vol)\nvar sumSrcVol = cum(src * vol)\nvar sumSrcSrcVol = cum(vol*Math.pow(src, 2))\nvar VWAP = sumSrcVol / sumVol \nvar variance = sumSrcSrcVol / sumVol - Math.pow(VWAP, 2)\nvar stDev = Math.sqrt(variance < 0 ? 0 : variance)\n\t\nline(VWAP)\ncloudarea(VWAP - stDev * options.stdevMultiplier, VWAP + stDev * options.stdevMultiplier)\nvar unixDays = bar.timestamp / 60 / 60 / 24 + 3\nif (unixDays % (options.sessionLengthInDays) === 0) {\n  fns[0].state = {}\n  fns[1].state = {}\n  fns[2].state = {}\n}",
+    "createdAt": 1671228046733,
+    "updatedAt": 1704890651196,
+    "displayName": "VWAP 1.618",
+    "description": null,
+    "author": "aggr"
+  }
+}
