@@ -1,0 +1,25 @@
+{
+  "type": "indicators",
+  "name": "indicators:Mondays",
+  "data": {
+    "id": "mondays",
+    "name": "Mondays",
+    "options": {
+      "priceScaleId": "right",
+      "pivotLength": 14,
+      "strokeWidth": 1,
+      "visible": true,
+      "strokeColor": "rgba(255,255,255,0.6)",
+      "scaleMargins": {
+        "top": 0.04,
+        "bottom": 0.63
+      }
+    },
+    "script": "// <STARTUP SCRIPT> \r\nif (!boundaries) {\r\n  lastPivotHigh = null\r\n  lastPivotLow = null\r\n\r\n  mondayHigh = null\r\n  mondayLow = null\r\n\r\n  pivotLength = 10\r\n  boundaries = {}\r\n  if (series[0].setExtensionsBoundaries) {\r\n    series[0].setExtensionsBoundaries(boundaries)\r\n  }\r\n  if (series[1].setExtensionsBoundaries) {\r\n    series[1].setExtensionsBoundaries(boundaries)\r\n  }\r\n}\r\n// </STARTUP SCRIPT> \r\n\r\n// process only on new candle\r\nif (bar.length === lastIndex) {\r\n  return\r\n}\r\n\r\nvar nyDateTime = new Date(time*1000);\r\n\r\n// oOnly within 2 weeks\r\nif( new Date().getTime() - nyDateTime.getTime() > 1209600000 ){\r\n  return\r\n}\r\n\r\n// Tuesday 1pm in NZ = Monday midnight\r\nif( nyDateTime.getDay() == 2 && nyDateTime.getHours() === 13 && nyDateTime.getMinutes() === 0 ){\r\n  pivotLength = Math.round((23*60*60/bar.timeframe) )\r\n  mondayHigh =  pivot_high($price.high, pivotLength, 0)\r\n  mondayLow =  pivot_low($price.low, pivotLength, 0)\r\n}\r\n\r\nif (mondayHigh) {\r\n  if (lastPivotHigh) {\r\n    boundaries[lastPivotHigh] = bar.length\r\n  }\r\n  lastPivotHigh = mondayHigh\r\n  mondayHigh = null\r\n  renderer.indicators[indicatorId].series[0] = {\r\n    time: time,\r\n    id: lastPivotHigh,\r\n    lowerValue: lastPivotHigh,\r\n    higherValue: lastPivotHigh,\r\n    extendRight: true,\r\n    label: lastPivotHigh,\r\n  }\r\n\r\n  if (lastPivotLow) {\r\n    boundaries[lastPivotLow] = bar.length\r\n  }\r\n  lastPivotLow = mondayLow\r\n  mondayHigh = null\r\n  renderer.indicators[indicatorId].series[1] = {\r\n    time: time,\r\n    id: lastPivotLow,\r\n    lowerValue: lastPivotLow,\r\n    higherValue: lastPivotLow,\r\n    extendRight: true,\r\n    label: lastPivotLow,\r\n  }\r\n}\r\n\r\nlastIndex = bar.length\r\n  \r\nreturn\r\n  \r\nbrokenarea({ time: time }, strokeWidth = options.strokeWidth, strokeColor = options.strokeColor, lastValueVisible = true, title = \"M.H\")\r\nbrokenarea({ time: time }, strokeWidth = options.strokeWidth, strokeColor = options.strokeColor, lastValueVisible = true, title = \"M.L\")",
+    "createdAt": 1701224825127,
+    "updatedAt": 1704843293396,
+    "displayName": "Mondays",
+    "description": "If you are following Rektproof strategy around mondays high & low. Here an indicator to print it. \nYou'll need to change the date to trigger it (moonday midnight). I am based in NZ so it is tuesday 1pm.",
+    "author": "finchen"
+  }
+}
