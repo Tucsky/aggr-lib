@@ -1,0 +1,20 @@
+{
+  "type": "indicators",
+  "name": "indicators:OBV",
+  "data": {
+    "id": "obv",
+    "name": "OBV",
+    "options": {
+      "priceScaleId": "_tfjysqee4eywg3a2",
+      "scaleMargins": {
+        "top": 0.1,
+        "bottom": 0.2
+      }
+    },
+    "script": "sign = $price.close > $price.open ? 1 : -1\nvolume = vbuy + vsell\nobv = cum(sign * volume)\nplotline(obv, title=\"obv\")",
+    "createdAt": 1704853083764,
+    "updatedAt": 1704853103409,
+    "displayName": "OBV",
+    "author": "KeTan"
+  }
+}
