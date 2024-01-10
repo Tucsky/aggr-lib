@@ -1,0 +1,21 @@
+{
+  "type": "indicators",
+  "name": "indicators:Delta divs",
+  "data": {
+    "id": "delta-divs",
+    "name": "Delta divs",
+    "options": {
+      "priceScaleId": "right",
+      "lookback": 10,
+      "lessRatio": 0.021,
+      "loopback": 200,
+      "visible": true
+    },
+    "script": "lookback = option(default=200,min=0,max=200,type=range,step=1)\nlessRatio = option(default=0.05,min=0.02,max=0.1,type=range,step=0.001)\n\n// <STARTUP SCRIPT> \nif (!pendingMarkers) {\n  // runs only once\n  markers = []\n  pendingMarkers = []\n  lastIndex = null\n}\n// </STARTUP SCRIPT> \n\n// <MARKERS.UTILS> \nif (pendingMarkers.length) {\n  markers = markers.concat(pendingMarkers)\n  if (series[0].setMarkers) {\n    series[0].setMarkers(markers)\n  }\n  pendingMarkers = []\n}\n// </MARKERS.UTILS>\n\n// process only on new candle\nif (bar.length === lastIndex) {\n  return\n}\n\ntimes = time\nworkingTime = times[1]\nhigh = $price.high\nlow = $price.low\nph = high[1]\npl = low[1]\n\n// ghost price for markers\ncandlestick($price, color=transparent, border=false, borderColor=transparent, wickColor=transparent)\n\nvs = vsell\nvb = vbuy\nvd = vb[1] - vs[1]\nvol = vb[1] + vs[1]\nvar top = highest(ph, options.lookback)\nvar btm = lowest(pl, options.lookback)\nvar avgVol = sum(vol, options.lookback) / options.lookback\nvar vdRatio = Math.abs(vd / vol)\nvar isLessRatio = vdRatio < options.lessRatio\nvar highVol = vol > avgVol\nvar bearSignal = ph >= top && highVol && (isLessRatio || vd < 0)\nvar bullSignal = pl <= btm && highVol && (isLessRatio || vd > 0)\n\nif (bearSignal) {\n  pendingMarkers.push({\n    time: workingTime,\n    position: 'aboveBar',\n    color: 'red',\n    shape: 'arrowDown'\n  })\n}\n\nif (bullSignal) {\n  pendingMarkers.push({\n    time: workingTime,\n    position: 'belowBar',\n    color: 'lime',\n    shape: 'arrowUp'\n  })\n}\n\n// set reference to bar index : only process first bar of tick\nlastIndex = bar.length",
+    "createdAt": 1704852855961,
+    "updatedAt": 1704852923594,
+    "displayName": "Delta divs",
+    "description": " ",
+    "author": "KeTan"
+  }
+}
