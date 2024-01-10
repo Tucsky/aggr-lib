@@ -1,0 +1,23 @@
+{
+  "type": "indicators",
+  "name": "indicators:MFI",
+  "data": {
+    "id": "mfi",
+    "name": "MFI",
+    "options": {
+      "priceScaleId": "mfi",
+      "scaleMargins": {
+        "top": 0.63,
+        "bottom": 0.05
+      },
+      "color": "rgb(255,229,0)",
+      "thresholdColor": "rgba(255,255,255,0.25)"
+    },
+    "script": "src = ($price.high + $price.low + $price.close) / 3\r\nvolume=vbuy+vsell\r\nchange=src-src[1]\r\nupper = sum(volume * (change <= 0 ? 0 : src), 14)\r\nlower = sum(volume * (change >= 0 ? 0 : src), 14)\r\nmf = !lower ? null : 100 - (100 / (1 + upper / lower))\r\nplotline(mf, color=options.color)\r\nplotline(80, color=options.thresholdColor, lineStyle=3)\r\nplotline(20, color=options.thresholdColor, lineStyle=3)",
+    "createdAt": 1704851612924,
+    "updatedAt": 1704851624642,
+    "displayName": "MFI",
+    "description": null,
+    "author": "aggr"
+  }
+}
