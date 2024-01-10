@@ -5,36 +5,25 @@
     "id": "pvsra",
     "name": "PVSRA",
     "options": {
-      "priceScaleId": "right",
-      "priceFormat": {
-        "auto": true,
-        "precision": 1,
-        "minMove": 0.1
-      },
-      "visible": true,
-      "bullColorLight": "rgb(175,175,175)",
-      "bearColorLight": "rgb(137,137,137)",
-      "bullColor": "rgb(153,153,153)",
-      "bearColor": "rgb(77,77,77)",
-      "borderVisible": false,
-      "priceLineVisible": false,
-      "bullClimaxColor": "rgb(39,227,53)",
-      "bearClimaxColor": "rgb(255,0,0)",
-      "bullRisingColor": "rgb(33,150,243)",
-      "bearRisingColor": "rgb(224,64,251)",
-      "lastValueVisible": false,
-      "borderUpColor": "rgb(0,0,0)",
-      "borderDownColor": "rgb(0,0,0)",
-      "wickUpColor": "rgb(153,153,153)",
-      "wickDownColor": "rgb(77,77,77)",
+      "priceScaleId": "pvsra",
+      "blueVectorColor": "rgba(42,32,223,0.47)",
+      "greenVectorColor": "rgba(38,218,44,0.5)",
+      "redVectorColor": "rgba(255,0,0,0.5)",
+      "regularCandleDownColor": "rgba(60,60,60,0.5)",
+      "regularCandleUpColor": "rgba(170,170,170,0.51)",
+      "violetVectorColor": "rgba(215,45,215,0.51)",
+      "showDelta": true,
+      "downColor": "rgba(203,101,101,0.5)",
+      "upColor": "rgba(147,198,134,0.51)",
       "scaleMargins": {
-        "top": 0.04,
-        "bottom": 0.26
-      }
+        "top": 0.84,
+        "bottom": 0
+      },
+      "visible": true
     },
-    "script": "var theprice = avg_ohlc(bar)\nvolume = vsell + vbuy\naverageVolume = sma(vsell, 10) + sma(vbuy, 10)\nclimax = volume*(theprice.high - theprice.low)\n\n//highestClimax10 = Math.max((#climax).slice(-10))\nhighestClimax10 = highest(climax,10)\n\nvar climaxVolume = ((volume >= (2 * averageVolume)) | (climax >= highestClimax10))\n\nvar risingVolume = volume >= (1.5 * averageVolume) & !climaxVolume\n\n\nif(climaxVolume)\n{\n  plotcandlestick({time: time, open: theprice.open, high: theprice.high, low: theprice.low, close: theprice.close},\n  upColor=options.bullClimaxColor,     \n  downColor=options.bearClimaxColor)\n}\nelse if(risingVolume)\n{\n  plotcandlestick({time: time, open: theprice.open, high: theprice.high, low: theprice.low, close: theprice.close},\n  upColor=options.bullRisingColor,     \n  downColor=options.bearRisingColor)\n}\nelse\n{\n  plotcandlestick({time: time, open: theprice.open, high: theprice.high, low: theprice.low, close: theprice.close},\n  upColor=options.bullColor,     \n  downColor=options.bearColor)\n}",
-    "createdAt": 1645562879144,
-    "updatedAt": 1704851005963,
+    "script": "high = $price.high\nlow = $price.low\nclose = $price.close\nopen = $price.open\nvolume = (vbuy+vsell)/close\n\naverageVolume = sum(volume[1], 10)/10.0\nvolumeSpread = volume*(high - low)\nhighestVolumeSpread = highest(volumeSpread[1], 10)\ncolor = \n  (\n    (volume >= 2*averageVolume || volumeSpread >= highestVolumeSpread) ? \n      (close > open ? options.greenVectorColor : options.redVectorColor) : \n    (volume >= 1.5*averageVolume) ? \n      (close > open ? options.blueVectorColor : options.violetVectorColor) : \n    (close > open ? options.regularCandleUpColor : options.regularCandleDownColor)\n  )\n\nif (options.showDelta) {\n  plothistogram({ time: time, value: Math.abs((vbuy-vsell)/close), color: (vbuy-vsell)/close > 0 ? options.upColor : options.downColor})\n}\n\nplothistogram({\n  time: time,\n  value: volume < 0 ? Math.abs(volume) : volume,\n  color: color\n})\n\n$price.color = color",
+    "createdAt": 1683851146489,
+    "updatedAt": 1704857482660,
     "displayName": "PVSRA",
     "description": "PVSRA candles indicator as used by traders reality and described here : https://www.forexfactory.com/thread/540706-pvsra-price-volume-sr-analysis",
     "author": "qwpto"
