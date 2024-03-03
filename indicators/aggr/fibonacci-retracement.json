@@ -1,25 +1,41 @@
 {
-  "type": "indicators",
+  "type": "indicator",
   "name": "indicators:Fibonacci Retracement",
   "data": {
-    "id": "fibonacci-retracement",
-    "name": "Fibonacci Retracement",
     "options": {
       "priceScaleId": "right",
       "lengthLeft": 50,
-      "lengthRight": 50,
+      "lengthRight": 35,
       "extendLength": 0,
       "repaint": false,
       "useClose": true,
       "renderInfinite": true,
-      "levels": "",
-      "strokeWidth": 1
+      "levels": "0.618,1.618,4.236,9.618",
+      "strokeWidth": 1,
+      "visible": true,
+      "srcExchange": null,
+      "srcType": null,
+      "srcQuote": null,
+      "useHeikinAshi": false,
+      "useGaps": true,
+      "scaleMargins": {
+        "top": 0.04,
+        "bottom": 0.22
+      },
+      "useNearest": true,
+      "useSwing": false,
+      "colorB": "rgb(255,235,59)",
+      "colorA": "rgba(255,235,59,0.22)",
+      "useLog": false,
+      "color": "rgb(255,255,255)",
+      "showLevels": false
     },
-    "script": "// Top to bottom fib retracement levels / extentions\n// 1. identify top and bottom\n// 2. pull a fib sequence (see levels option)\n\n// slots\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\n\n// options\nlengthLeft=option(type=range,default=50,min=3,max=200,step=1,description=\"Left pivot length (look back)\")\nlengthRight=option(type=range,default=50,min=3,max=200,step=1,description=\"Right pivot length (look ahead)\")\nextendLength=option(type=range,min=0,max=2000,log=true,default=0,step=1,description=\"Extend line length (0 = infinite)\")\nrepaint=option(type=checkbox,default=false,description=\"Place line at (current time - lengthRight)\")\nuseClose=option(type=checkbox,default=true,description=\"Use close instead of high and low\")\nrenderInfinite=option(type=checkbox,default=true,description=\"Changing this requires rebuild (toggle on/off)\")\nlevels=option(type=text,description=\"Comma separated list of fib levels (max 4 or see script)\")\ncolorA=option(type=color,default='rgba(255,255,0,0.13)')\ncolorB=option(type=color,default='rgb(255,235,59)')\nstrokeWidth=option(default=1)\n\nif (!boundaries) {\n  lastIndex = null\n  boundaries = {}\n  levelsArr = String(levels || '0,0.618,1.618,4.236').split(/,|\\|/)\n\n  var slots = 0\n  for (let i = 0; i < series.length; i++) {\n    if (series[i].seriesType() === 'BrokenArea') {\n      series[i].setExtensionsBoundaries(boundaries)\n      slots++\n    }\n  }\n\n  maxLevels = Math.min(levelsArr.length, slots)\n}\n\nif (bar.length === lastIndex) {\n  return\n}\n\nvar ph = pivot_high(useClose ? $price.close : $price.high, lengthLeft, lengthRight)\nvar a = 0\nvar b = 0\n\nif (ph && ph != lastPh) {\n  lastPh = ph\n\n  if (bar.length > lengthLeft + lengthRight) {\n    if (lastPl) {\n      a = lastPh\n      b = lastPl\n    }\n  }\n}\n\nvar pl = pivot_low(useClose ? $price.close : $price.low, lengthLeft, lengthRight)\n\nif (pl && pl !== lastPl) {\n  lastPl = pl\n\n  if (bar.length > lengthLeft + lengthRight) {\n    if (lastPh) {\n      a = lastPl\n      b = lastPh\n    }\n  }\n}\n\nif (a && b) {\n  var isLow = b < a\n  var r = isLow ? a - b : b - a\n  var t = time - (repaint ? bar.timeframe * (lengthRight - 1) : 0)\n  lastTimePainted = t\n  paintId = String(Math.random())\n  if (paintId && extendLength > 0) {\n    boundaries[paintId] = bar.length + extendLength\n  }\n\n  for (let i = 0; i < levelsArr.length; i++) {\n    if (!series[i]) {\n      continue\n    }\n    var level = levelsArr[i]\n    ext = a + r * level * (isLow ? -1 : 1)\n    bar.series[series[i].id] = {\n      id: paintId,\n      time: t,\n      higherValue: ext,\n      lowerValue: ext,\n      extendRight: true,\n      color: interpolate(i / maxLevels, colorA, colorB)\n    }\n  }\n}\n\n// set reference to bar index : only process first bar of tick\nlastIndex = bar.length",
-    "createdAt": 1708646152650,
-    "updatedAt": 1708647542072,
+    "script": "// Top to bottom fib retracement levels / extentions\n// 1. identify top and bottom\n// 2. pull a fib sequence (see levels option)\n\n// define series (1 serie = 1 line renderable at each bar)\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\nbrokenarea(infinite = renderInfinite)\n\n// options\nsrcExchange = option(default=null,type=exchange,rebuild=true)\nsrcQuote = option(default=null,type=list,options=[null, \"USD\", \"USDT\", \"TUSD\", \"USDC\"],rebuild=true)\nsrcType = option(default=null,type=list,options=[null, \"spot\", \"perp\"],rebuild=true)\nuseHeikinAshi = option(type=checkbox)\nuseGaps = option(type=checkbox)\nlengthLeft=option(type=range,default=50,min=3,max=200,step=1,description=\"Left pivot length (look back)\")\nlengthRight=option(type=range,default=35,min=3,max=200,step=1,description=\"Right pivot length (look ahead)\")\nextendLength=option(type=range,min=0,max=2000,log=true,default=0,step=1,description=\"Extend line length (0 = infinite)\")\nrepaint=option(type=checkbox,default=false,description=\"Place line at (current time - lengthRight)\")\nuseClose=option(type=checkbox,default=true,description=\"Use close instead of high and low\")\nuseSwing=option(type=checkbox,default=false,description=\"Use open or close\")\nuseLog=option(type=checkbox,default=false,description=\"Use log scale for ext calculation\")\nrenderInfinite=option(type=checkbox,default=true,description=\"Changing this requires rebuild (toggle on/off)\")\nshowLevels=option(type=checkbox,default=false,description=\"Show what levels each line is\")\nlevels=option(type=text,default=\"0.618|1.618|4.236|9.618\",description=\"Comma separated list of fib levels (max 4 or see script)\")\ncolorA=option(type=color,default='rgba(255,255,0,0.13)')\ncolorB=option(type=color,default='rgb(255,235,59)')\nstrokeWidth=option(default=1)\n\nif (!boundaries) {\n  //init\n\n  lastIndex = null\n  boundaries = {} // store *end* of lines here (id => index)\n  levelsArr = String(levels).split(/,|\\|/)\n\n  var slots = 0\n  for (let i = 0; i < series.length; i++) {\n    if (series[i].seriesType() === 'BrokenArea') {\n      series[i].setExtensionsBoundaries(boundaries)\n      slots++\n    }\n  }\n\n  maxLevels = Math.min(levelsArr.length, slots)\n}\n\nif (bar.length === lastIndex || bar.length < lengthLeft) {\n  // only execute 1 time per bar\n  return\n}\n\n// get price source\nvar src = srcExchange || srcType || srcQuote ? source(type=srcType, exchange=srcExchange, quote=srcQuote) : bar\n\nif (!src) {\n  return\n}\n\nvar a = 0\nvar b = 0\n\n// get price ohlc\nprice = useHeikinAshi ? avg_heikinashi(src) : useGaps ? avg_ohlc_with_gaps(src) : avg_ohlc(src)\n\n// find pivot high\nswingHigh = useSwing ? price.close < price.open && price[1].close > price[1].open ? Math.min(price[1].close, price.open) : swingHigh : null\nvar ph = pivot_high(useClose ? useSwing ? swingHigh : price.close : price.high, lengthLeft, lengthRight)\n\nif (ph && ph != lastPh) {\n  // if pivot high\n  lastPh = ph\n\n  if (lastPl) {\n    a = lastPh\n    b = lastPl\n  }\n}\n\n// find pivot low\nswingLow = useSwing ? price.open < price.close && price[1].open > price[1].close ? Math.max(price[1].close, price.open) : swingLow : null\nvar pl = pivot_low(useClose ? useSwing ? swingLow : price.close : price.low, lengthLeft, lengthRight)\n\nif (pl && pl !== lastPl) {\n  // if pivot low\n  lastPl = pl\n\n  if (lastPh) {\n    a = lastPl\n    b = lastPh\n  }\n}\n\n\nif (a && b) {\n  var isLow = b < a\n  var r = useLog ? Math.log(isLow ? a / b : b / a) : isLow ? a - b : b - a\n  var t = time - (repaint ? bar.timeframe * (lengthRight - 1) : 0)\n  paintId = String(Math.random())\n  if (paintId && extendLength > 0) {\n    boundaries[paintId] = bar.length + extendLength\n  }\n\n  for (let i = 0; i < levelsArr.length; i++) {\n    if (!series[i]) {\n      continue\n    }\n    var level = levelsArr[i]\n    if (useLog) {\n      ext = isLow ? a * Math.exp(-r * level) : a * Math.exp(r * level);\n    } else {\n      ext = a + r * level * (isLow ? -1 : 1);\n    }\n    bar.series[series[i].id] = {\n      id: paintId,\n      time: t,\n      higherValue: ext,\n      lowerValue: ext,\n      extendRight: true,\n      color: interpolate(i / maxLevels, colorA, colorB),\n      label: showLevels ? String(level) : undefined\n    }\n  }\n}\n\n// set reference to bar index (only process first tick of a bar)\nlastIndex = bar.length",
+    "createdAt": 1708647696429,
+    "updatedAt": 1709491422350,
     "displayName": "Fibonacci Retracement",
-    "description": "",
+    "description": "This Automatic Fibonacci Retracement/Extension Indicator is engineered to assist traders in identifying key support and resistance levels using pivot points and custom Fibonacci ratios. It automatically calculates and draws Fibonacci levels on a trading chart by locating pivot highs and lows within a user-defined lookback and lookahead range.\n\nThe indicator offers a set of configurable options allowing for precise customization to fit various trading strategies. Users can input a list of preferred Fibonacci-like ratios beyond the standard 0.618 and 1.618, including extended levels such as 4.236 and 9.618, which are particularly useful for predicting potential retracements or extensions of market movements.\n\nFeatures include:\n\nCustomizable Fibonacci ratios for both retracement and extension levels.\nAdjustable pivot lengths to define the range for high and low pivots.\nOptional logarithmic scaling for extension calculations.\nSelection between using high/low or open/close for determining pivots.\nHeikin Ashi and gap inclusion for more sophisticated price calculations.\nInfinite or specified line extension to project future price levels.\nVisual differentiation through color gradients applied to the Fibonacci levels.",
+    "pr": "https://github.com/Tucsky/aggr-lib/pull/22",
     "author": "aggr"
   }
 }
