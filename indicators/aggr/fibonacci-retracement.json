@@ -30,6 +30,7 @@
     "updatedAt": 1709471193388,
     "displayName": "Fibonacci Retracement",
     "description": "",
-    "author": "aggr"
+    "author": "aggr",
+    "pr": "https://github.com/Tucsky/aggr-lib/pull/21"
   }
 }
