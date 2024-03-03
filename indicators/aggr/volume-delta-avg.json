@@ -1,0 +1,33 @@
+{
+  "type": "indicator",
+  "name": "indicators:VOL Δ Avg",
+  "data": {
+    "options": {
+      "priceScaleId": "_8x3g8odw7u9j6jx5",
+      "priceFormat": {
+        "type": "volume"
+      },
+      "upColor": "rgb(82,209,88)",
+      "downColor": "rgb(242,54,69)",
+      "scaleMargins": {
+        "top": 0.8,
+        "bottom": 0
+      },
+      "showDelta": true,
+      "upBgColor": "rgba(65,240,123,0.5)",
+      "downBgColor": "rgba(49,121,245,0.5)",
+      "visible": true,
+      "length": 14,
+      "smoothLength": 3,
+      "avgLength": 4,
+      "veryDownColor": "rgb(128,25,34)"
+    },
+    "script": "avgLength = option(default=4)\nsmoothLength = option(default=3)\nveryUpColor = option(type=color,default=rgb(255,255,0))\nupColor = option(type=color,default=rgb(82,209,88))\ndownColor = option(type=color,default=rgb(242,54,69))\nveryDownColor = option(type=color,default=rgb(128,25,34))\n\nvar delta = vbuy - vsell;  // delta in USD\nvar avgDelta = sma(vbuy - vsell, avgLength);  // average delta over 'avgLength' bars\n\n// Ensure avgDelta is positive for stable division and add a small epsilon to avoid division by zero\navgDelta = Math.abs(avgDelta) + Number.EPSILON;\n\n// Adjusted normalization to include a smoothing factor (k)\nvar k = 0.5;  // Smoothing constant, adjust based on desired sensitivity\nvar normalized_delta = (delta / (2 * avgDelta * k) + 0.5);\n\n// Smoothed ratio calculation to reduce extremes\n// Using Math.max and Math.min to ensure the ratio stays between 0 and 1\nvar smoothed_ratio = Math.max(0, Math.min(1, normalized_delta));\n\n// Apply a simple moving average (SMA) or exponential moving average (EMA) for further smoothing\n// 'smoothing_length' defines the period for the moving average\nvar smoothed_ratio_sma = sma(smoothed_ratio, smoothLength);\nhistogram({\n  time: time,\n  value: vbuy + vsell,\n  color: interpolate(smoothed_ratio_sma, veryDownColor, downColor, upColor, veryUpColor)\n})",
+    "createdAt": 1708780055899,
+    "updatedAt": 1709483301384,
+    "displayName": "VOL Δ Avg",
+    "description": "The Dynamic Volume Delta Histogram Indicator is an advanced tool designed for financial market analysis, providing traders with a vivid visualization of volume dynamics. This indicator displays the volume of the current bar while utilizing a color-coded system to represent the normalized volume delta.\n\nBy calculating the difference between buy (vbuy) and sell (vsell) volumes, termed as 'delta', and then smoothing this value over a user-defined average length (avgLength), the indicator offers a clear and customizable view of market sentiment. The normalization process adjusts the delta by a smoothing factor (k), ensuring the ratio is stabilized and falls between 0 and 1. The final smoothed ratio is then depicted as a histogram, which changes color according to the magnitude of volume change: from 'veryDownColor' for significant sell volumes, 'downColor' for moderate sells, 'upColor' for moderate buys, to 'veryUpColor' for substantial buy volumes.\n\nThis indicator is ideal for traders who need to quickly assess market volume and sentiment changes. By integrating both a simple moving average (SMA) and an exponential moving average (EMA) for additional smoothing, the Dynamic Volume Delta Histogram Indicator minimizes noise and highlights true market trends.",
+    "pr": "https://github.com/Tucsky/aggr-lib-test/pull/7",
+    "author": "aggr"
+  }
+}
