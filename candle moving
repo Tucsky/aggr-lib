@@ -1,0 +1,124 @@
+// This work is licensed under a Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) https://creativecommons.org/licenses/by-nc-sa/4.0/
+// © Zeiierman
+
+// ~~ {
+//@version=5
+indicator("Candles In Row (Expo)",overlay=true)
+//~~}
+
+// ~~ ToolTips {
+t0 ="Select the price input to determine the basis for calculation. You can choose between the regular close and open prices or opt for Heikin Ashi candles."
+t1 = "This option allows you to select between displaying the full data window or only the active data. Additionally, you can choose to display a counter that keeps track of the number of candles."
+t2 = "Select the desired number of consecutive candles with a specific color to trigger an alert. Choose the color, either green or red, that the sequence of candles must match for the alert to be created."
+t3 ="Set the location and size for the display table, allowing you to position it according to your preferences."
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Inputs {
+price  = input.string("Candles","Select Price",["Candles","Heikin Ashi Candles"],t0,"price")
+window = input.string("All Data","Display Data",["All Data","Active Data"],inline="window")
+count  = input.bool(true,"Candle Counter",t1,"window")
+inRow  = input.int(5,"Alert Candles in Row",group="Alerts",inline="alert")
+candle = input.string("Green","",["Green","Red"],t2,"alert","Alerts")
+pos   = input.string(position.top_right, title="Location",options =[position.top_right,position.top_center,
+ position.top_left,position.bottom_right,position.bottom_center,position.bottom_left,position.middle_right,position.middle_left],group="Table",inline="table")
+size  = input.string(size.normal, title="Size",options =[size.auto,size.tiny,size.small,size.normal,size.large,size.huge],group="Table",inline="table",tooltip=t3)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Variables { 
+var data    = matrix.new<int>(1,4,0)
+var labs    = array.new<label>()
+var counter = int(na)
+tbl         = table.new(pos, data.columns()+1, data.rows()+1,chart.bg_color,color.black,1,color(na),1)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Price { 
+haClose = hlcc4 
+haOpen  = float(na)
+haOpen := na(haOpen[1])?(open + close)/2:(nz(haOpen[1])+nz(haClose[1]))/2
+c = price=="Candles"?close:haClose
+o = price=="Candles"?open:haOpen
+green       = c>o
+red         = c<o
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Label Count Function {
+Numbers(c,b)=>
+    if count
+        lab = label.new(bar_index,b?low-ta.ema(ta.tr,100):high+ta.ema(ta.tr,100),str.tostring(c+1),
+         color=na,style=b?label.style_label_up:label.style_label_down,textcolor=green?color.rgb(61, 212, 139,10):red?color.rgb(230, 103, 103,10):chart.fg_color)
+        labs.unshift(lab)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Counter Code {
+if green and green[1]
+    counter += 1
+    if data.rows()<=counter
+        data.add_row(counter,array.from(1,0,0,0))
+    else
+        data.set(counter,0,data.get(counter,0)+1)
+    data.set(counter-1,2,data.get(counter-1,2)+1)
+    Numbers(counter,true)
+else if red and red[1]
+    counter += 1
+    if data.rows()<=counter
+        data.add_row(counter,array.from(0,1,0,0))
+    else
+        data.set(counter,1,data.get(counter,1)+1)
+    data.set(counter-1,3,data.get(counter-1,3)+1)
+    Numbers(counter,false)
+else
+    counter := 0
+    for element in labs
+        element.delete()
+    labs.clear()
+    if green
+        data.set(counter,0,data.get(counter,0)+1)
+        data.set(counter[1],2,data.get(counter[1],2)+1)
+        Numbers(counter,true)
+    if red
+        data.set(counter,1,data.get(counter,1)+1)
+        data.set(counter[1],3,data.get(counter[1],3)+1)
+        Numbers(counter,false)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Table {
+if barstate.islast
+    headerColor     = color.rgb(56, 80, 255)
+    headerTextColor = color.rgb(255, 255, 255)
+    tbl.cell(0,0,"Candles in Row",bgcolor=headerColor,text_color=headerTextColor,text_size=size)
+    tbl.cell(1,0,"Green",bgcolor=headerColor,text_color=headerTextColor,text_size=size)
+    tbl.cell(2,0,"Red",bgcolor=headerColor,text_color=headerTextColor,text_size=size)
+    tbl.cell(3,0,"Next Candle is Green",bgcolor=headerColor,text_color=headerTextColor,text_size=size)
+    tbl.cell(4,0,"Next Candle is Red",bgcolor=headerColor,text_color=headerTextColor,text_size=size)
+    for i=0 to data.rows()-1
+        x = i
+        if window!="All Data"
+            x:=counter
+        total = data.get(x,2)+data.get(x,3)
+        predictionGreen = (data.get(x,2)/total)*100
+        predictionRed   = (data.get(x,3)/total)*100
+        posColor = color.rgb(61, 212, 139,10)
+        negColor = color.rgb(230, 103, 103,10)
+        bgColor  = color.from_gradient(value=i, bottom_value=1, top_value=20, bottom_color=color.new(color.teal,100) , top_color=color.new(color.teal, 0))//top_color=color.new(#f6ff4e, 100))
+        rowTextColor    = chart.fg_color
+        tbl.cell(0,x+1,str.tostring(x+1),
+         bgcolor=counter==x and green? posColor:counter==x and red?negColor:bgColor, text_color=rowTextColor,text_size=size)
+        tbl.cell(1,x+1,str.tostring(data.get(x,0)),
+         bgcolor=counter==x and green?posColor:bgColor, text_color=rowTextColor,text_size=size)
+        tbl.cell(2,x+1,str.tostring(data.get(x,1)),
+         bgcolor=counter==x and red?negColor:bgColor, text_color=rowTextColor,text_size=size)
+        tbl.cell(3,x+1,str.tostring(predictionGreen,format.percent),
+         bgcolor=counter==x and predictionGreen>predictionRed?posColor:bgColor, text_color=rowTextColor,text_size=size)
+        tbl.cell(4,x+1,str.tostring(predictionRed,format.percent),
+         bgcolor=counter==x and predictionGreen<predictionRed?negColor:bgColor, text_color=rowTextColor,text_size=size)
+        if window!="All Data"
+            break
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Alert {
+if counter==inRow
+    if green and candle=="Green"
+        alert(str.tostring(counter)+" Green Candles in Row on: "+syminfo.ticker+" ["+timeframe.period+"]")
+    if red and candle=="Red"
+        alert(str.tostring(counter)+" Red Candles in Row on: "+syminfo.ticker+" ["+timeframe.period+"]")
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
