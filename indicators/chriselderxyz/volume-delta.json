@@ -1,0 +1,23 @@
+{
+  "type": "indicator",
+  "name": "Volume Delta",
+  "data": {
+    "libraryId": "volume-delta",
+    "displayName": "Volume Delta",
+    "options": {
+      "priceScaleId": "_9xmhdhmj2pf5zrgv",
+      "scaleMargins": {
+        "top": 0.1,
+        "bottom": 0.2
+      },
+      "exchange": 0,
+      "type": 0,
+      "chartTitle": ""
+    },
+    "script": "// Options //\n\n// Filters\nexchange = option(default=null, type=exchange, rebuild=true)\ntype = option(default=null, type=list, options=[\"spot\", \"perp\"], rebuild=true)\n\n// Chart\nchartTitle = option(default=\"Delta\", type=text, rebuild=true)\nupColor = option(default=\"#42bda8\", type=color, rebuild=true)\ndownColor = option(default=\"#f77c80\", type=color, rebuild=true)\n\n// Get Filtered Sources //\nvar src = source(type=type, exchange=exchange)\n\n// Calculate Volume Delta //\nvar delta = 0\n\nfor (const [key, value] of Object.entries(src.sources)) {\n  delta = delta + value.vbuy - value.vsell\n}\n\n// Get Color //\nvar chartColor = delta > 0 ? upColor : downColor\n\n// Plot Delta //\n histogram(\n  {\n    value: delta,\n    time: time,\n    color: chartColor\n  },\n  title = chartTitle\n)",
+    "createdAt": 1729970010068,
+    "updatedAt": 1729970046285,
+    "presets": [],
+    "author": "chriselderxyz"
+  }
+}
