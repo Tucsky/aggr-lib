@@ -1,0 +1,38 @@
+{
+  "type": "indicator",
+  "name": "indicators:SmoothHeikinAshi",
+  "data": {
+    "options": {
+      "priceScaleId": "left",
+      "priceFormat": {
+        "auto": true,
+        "precision": 1
+      },
+      "priceLineVisible": true,
+      "lastValueVisible": true,
+      "borderVisible": false,
+      "upColor": "rgb(59,202,109)",
+      "downColor": "rgb(214,40,40)",
+      "borderUpColor": "rgb(59,202,109)",
+      "borderDownColor": "rgb(239,67,82)",
+      "wickUpColor": "rgb(223,211,144)",
+      "wickDownColor": "rgb(239,67,82)",
+      "useGaps": true,
+      "useHeikinAshi": true,
+      "visible": true,
+      "scaleMargins": {
+        "top": 0.38,
+        "bottom": 0.22
+      },
+      "baseLineVisible": true,
+      "smoothingLength": 100
+    },
+    "script": "// Optionen für die Glättung\nsmoothingLength = option(type=range, min=1, max=100, default=14, step=1); // Länge des gleitenden Durchschnitts\n\n// Original-Heikin-Ashi-Daten berechnen\nha = avg_heikinashi(bar)\n//line($price.close,colour=transparent)\n// Glätten der Heikin-Ashi-Werte\nsmoothedOpen = ema(ha.open, smoothingLength)\nsmoothedHigh = ema(ha.high, smoothingLength)\nsmoothedLow = ema(ha.low, smoothingLength)\nsmoothedClose = ema(ha.close, smoothingLength)\n\n// Glättete Heikin-Ashi-Kerzen plotten\nplotcandlestick(\n    smoothedOpen,\n    smoothedHigh,\n    smoothedLow,\n    smoothedClose,\n    color=smoothedClose > smoothedOpen ? 'green' : 'red' // Farbe: Grün für bullish, Rot für bearish\n)",
+    "createdAt": 1623024000001,
+    "updatedAt": 1733788087783,
+    "displayName": "SmoothHeikinAshi",
+    "description": "Smoother HeikinAshi+Range",
+    "enabled": true,
+    "author": "Robsn77"
+  }
+}
