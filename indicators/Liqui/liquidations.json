@@ -1,0 +1,24 @@
+{
+  "type": "indicator",
+  "name": "indicators:Liquidations",
+  "data": {
+    "options": {
+      "priceFormat": {
+        "type": "volume"
+      },
+      "priceScaleId": "volume_liquidations",
+      "upColor": "rgb(255,0,238)",
+      "downColor": "rgb(0,0,0)",
+      "scaleMargins": {
+        "top": 0.75,
+        "bottom": 0.17
+      }
+    },
+    "script": "histogram(lbuy, color=options.upColor)\nhistogram(-lsell, color=options.downColor)",
+    "createdAt": 1735412912741,
+    "updatedAt": 1735448636071,
+    "description": "Liquidations by side",
+    "enabled": true,
+    "author": "Liqui"
+  }
+}
