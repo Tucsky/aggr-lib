@@ -1,0 +1,16 @@
+{
+  "type": "indicator",
+  "name": "indicators:EMA",
+  "data": {
+    "options": {
+      "priceScaleId": "right"
+    },
+    "script": "line(ema($price.close, options.fastLength), color=options.fastColor)\nline(ema($price.close, options.mediumLength), color=options.mediumColor)\nline(ema($price.close, options.slowLength), color=options.slowColor)",
+    "createdAt": 1623024000000,
+    "updatedAt": 1743643058048,
+    "displayName": "EMA 50 100 200",
+    "description": null,
+    "enabled": true,
+    "author": "EMA"
+  }
+}
