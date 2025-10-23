@@ -1,0 +1,23 @@
+{
+  "type": "indicator",
+  "name": "indicators:CandleClose4hrN30min",
+  "data": {
+    "options": {
+      "priceScaleId": "_p9d8rx17ogh6xi3n",
+      "scaleMargins": {
+        "top": 0.22,
+        "bottom": 0.7
+      },
+      "lastValueVisible": true,
+      "priceLineVisible": false,
+      "baseLineVisible": false,
+      "color": "rgb(187,120,5)"
+    },
+    "script": "// Candle Close Countdown (30m + 4h)\r\n\r\nconst now = Date.now();\r\n\r\n// === 30 Minute Countdown ===\r\nconst candleMinutes30 = 30;\r\nconst intervalMs30 = candleMinutes30 * 60 * 1000;\r\nconst nextClose30 = Math.floor(now / intervalMs30) * intervalMs30 + intervalMs30;\r\nconst diff30 = nextClose30 - now;\r\nconst totalSeconds = Math.floor(diff30 / 1000);\r\nconst minutes = Math.floor(totalSeconds / 60);\r\nconst seconds = totalSeconds % 60;\r\nconst milliseconds = Math.floor((diff30 % 1000) / 10); // two-digit ms\r\n\r\nconst displayValue30 = minutes + seconds / 60 + milliseconds / 60000\r\n\r\n\r\nhistogram({\r\n  time: nextClose30,\r\n  value: displayValue30,\r\n  color:\r\n    displayValue30 < 1\r\n      ? `rgba(255,0,0,${Math.max(0.2, (diff30 / 1000) / 60)})`\r\n    : displayValue30 < 2\r\n      ? \"red\"\r\n    : displayValue30 < 3\r\n      ? \"yellow\"\r\n    : displayValue30 < 10\r\n      ? \"orangered\"\r\n    : displayValue30 < 20\r\n      ? \"orange\"\r\n    : \"blue\"\r\n});\r\n\r\n// === 4 Hour Countdown ===\r\nconst candleMinutes240 = 240; // 4 hours\r\nconst intervalMs240 = candleMinutes240 * 60 * 1000;\r\nconst nextClose240 = Math.floor(now / intervalMs240) * intervalMs240 + intervalMs240;\r\nconst diff240 = nextClose240 - now;\r\nconst displayValue240 = Math.round((diff240 / 3600000) * 10) / 10;\r\n\r\nhistogram({\r\n  time: nextClose240,\r\n  value: displayValue240,\r\n  color:\r\n    displayValue240 < 5\r\n      ? \"purple\"\r\n    : displayValue240 < 30\r\n      ? \"magenta\"\r\n    : displayValue240 < 60\r\n      ? \"violet\"\r\n    : \"cyan\"\r\n});",
+    "createdAt": 1761180544637,
+    "updatedAt": 1761201173708,
+    "displayName": "CandleClose4hrN30min",
+    "description": "2-4-1 Please Rescale in need",
+    "author": "Yourowner"
+  }
+}
