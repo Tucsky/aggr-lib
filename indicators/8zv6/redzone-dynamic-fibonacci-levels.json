@@ -1,0 +1,21 @@
+{
+  "type": "indicator",
+  "name": "indicators:RedZone Dynamic Fibonacci Levels",
+  "data": {
+    "options": {
+      "priceScaleId": "right",
+      "lastValueVisible": true,
+      "priceLineVisible": true,
+      "scaleMargins": {
+        "top": 0.04,
+        "bottom": 0.26
+      }
+    },
+    "script": "if(fib_high===0){fib_high=0;fib_low=0;above50=false;inRedZone=false;hasResetAtZero=true}var price=avg_ohlc(bar);var highestHigh=highest(price.high,options.longPeriod);var lowestLow=lowest(price.low,options.longPeriod);if(highestHigh>fib_high||lowestLow<fib_low){fib_high=highestHigh;fib_low=lowestLow}var diff=fib_high-fib_low;var fib2618=fib_high+(diff*1.618);var fib1=fib_high+diff;var fib618=fib_high-(diff*0.382);var fib50=fib_high-(diff*0.500);var fib28=fib_high-(diff*0.78);var fib0=fib_low;var wma_fib2618=ema(fib2618,options.longPeriod);var wma_fib1=ema(fib1,options.longPeriod);var wma_fib618=ema(fib618,options.longPeriod);var wma_fib50=ema(fib50,options.longPeriod);var wma_fib28=ema(fib28,options.longPeriod);var wma_fib0=ema(fib0,options.longPeriod);if(price.close<=wma_fib0){hasResetAtZero=true;inRedZone=false;above50=false}if(hasResetAtZero){if(price.close>wma_fib50){above50=true;hasResetAtZero=false}}else if(above50&&price.close<=wma_fib50){inRedZone=true;above50=false}candlestick({time:time,open:price.open,high:price.high,low:price.low,close:price.close,color:inRedZone?'red':above50&&price.close>=wma_fib618?'lightgreen':above50?'green':price.close>=wma_fib2618?'white':price.close>=wma_fib1?'orange':price.close>=wma_fib50?'green':price.close>=wma_fib28?'red':price.close>=wma_fib0?'magenta':'blue',title:'Price'});line(wma_fib2618,color='#FFFFFF',title='261.8%');line(wma_fib1,color='#FFA500',title='100%');line(wma_fib618,color='#32CD32',title='61.8%');line(wma_fib50,color='#FF0000',title='50%');line(wma_fib28,color='#FF00FF',title='28%');area({time:time,value:wma_fib0,color:'rgba(0,0,255,0.2)',title:'0%'});cloudarea(wma_fib1,wma_fib2618,color='rgba(0,0,0,0.6)')",
+    "createdAt": 1704843848569,
+    "updatedAt": 1764256642621,
+    "displayName": "RedZone Dynamic Fibonacci Levels",
+    "description": "Dynamic Fibonacci levels with state management and color-coded candles based on price position relative to key levels. Features EMA smoothing and cloud areas for better visualization.",
+    "author": "8zv6"
+  }
+}
