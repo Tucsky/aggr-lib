@@ -1,0 +1,111 @@
+// ===============================
+// EVERGET CMA - AGGREGATE FINAL
+// ===============================
+
+var price = $price
+var na = { time: time }
+
+// Source (istersen HLC3 yap)
+// var src = (price.high + price.low + price.close) / 3
+var src = price.close
+
+// Iterasyon
+var iters = options.iters || 20
+
+// ---------- FAST CMA ----------
+var sumFast = sum(src, options.fastLength)
+var sumFast2 = sum(Math.pow(src, 2), options.fastLength)
+
+var cmaFast = na
+
+if (sumFast != null && sumFast2 != null) {
+  var smaFast = sumFast / options.fastLength
+
+  var ex2Fast = sumFast2 / options.fastLength
+  var v1Fast = ex2Fast - Math.pow(smaFast, 2)
+  if (v1Fast < 0) v1Fast = 0
+
+  if (typeof cmaFastPrev === "undefined") cmaFastPrev = src
+  var v2Fast = Math.pow(cmaFastPrev - smaFast, 2)
+
+  var v3Fast = 1
+  if (v1Fast !== 0 && v2Fast !== 0) v3Fast = v2Fast / (v1Fast + v2Fast)
+
+  var kPrevFast = 1
+  var kFast = 1
+  for (var i = 0; i < iters; i++) {
+    kFast = v3Fast * kPrevFast * (2 - kPrevFast)
+    kPrevFast = kFast
+  }
+
+  cmaFast = cmaFastPrev + kFast * (smaFast - cmaFastPrev)
+  cmaFastPrev = cmaFast
+}
+
+// ---------- MEDIUM CMA ----------
+var sumMed = sum(src, options.mediumLength)
+var sumMed2 = sum(Math.pow(src, 2), options.mediumLength)
+
+var cmaMedium = na
+
+if (sumMed != null && sumMed2 != null) {
+  var smaMed = sumMed / options.mediumLength
+
+  var ex2Med = sumMed2 / options.mediumLength
+  var v1Med = ex2Med - Math.pow(smaMed, 2)
+  if (v1Med < 0) v1Med = 0
+
+  if (typeof cmaMediumPrev === "undefined") cmaMediumPrev = src
+  var v2Med = Math.pow(cmaMediumPrev - smaMed, 2)
+
+  var v3Med = 1
+  if (v1Med !== 0 && v2Med !== 0) v3Med = v2Med / (v1Med + v2Med)
+
+  var kPrevMed = 1
+  var kMed = 1
+  for (var j = 0; j < iters; j++) {
+    kMed = v3Med * kPrevMed * (2 - kPrevMed)
+    kPrevMed = kMed
+  }
+
+  cmaMedium = cmaMediumPrev + kMed * (smaMed - cmaMediumPrev)
+  cmaMediumPrev = cmaMedium
+}
+
+// ---------- SLOW CMA ----------
+var sumSlow = sum(src, options.slowLength)
+var sumSlow2 = sum(Math.pow(src, 2), options.slowLength)
+
+var cmaSlow = na
+
+if (sumSlow != null && sumSlow2 != null) {
+  var smaSlow = sumSlow / options.slowLength
+
+  var ex2Slow = sumSlow2 / options.slowLength
+  var v1Slow = ex2Slow - Math.pow(smaSlow, 2)
+  if (v1Slow < 0) v1Slow = 0
+
+  if (typeof cmaSlowPrev === "undefined") cmaSlowPrev = src
+  var v2Slow = Math.pow(cmaSlowPrev - smaSlow, 2)
+
+  var v3Slow = 1
+  if (v1Slow !== 0 && v2Slow !== 0) v3Slow = v2Slow / (v1Slow + v2Slow)
+
+  var kPrevSlow = 1
+  var kSlow = 1
+  for (var k = 0; k < iters; k++) {
+    kSlow = v3Slow * kPrevSlow * (2 - kPrevSlow)
+    kPrevSlow = kSlow
+  }
+
+  cmaSlow = cmaSlowPrev + kSlow * (smaSlow - cmaSlowPrev)
+  cmaSlowPrev = cmaSlow
+}
+
+// ===============================
+// DRAW (SMA yerine CMA)
+// ===============================
+
+line(cmaFast,   color = options.fastColor)
+line(cmaMedium, color = options.mediumColor)
+line(cmaSlow,   color = options.slowColor)
