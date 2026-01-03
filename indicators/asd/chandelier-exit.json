@@ -1,0 +1,17 @@
+{
+  "type": "indicator",
+  "name": "indicators:Chandelier Exit",
+  "data": {
+    "options": {
+      "priceScaleId": "right",
+      "positiveColor": "rgba(129,199,132,0.33)",
+      "negativeColor": "rgba(183,28,28,0.33)"
+    },
+    "script": "/* eslint-disable */\n/* prettier-disable */\n\nif (dir === 0) {\n  dir = 1\n  markers = []\n}\n\n// <markers utils>\nif (pendingMarker && pendingMarker.time < time) {\n  markers.push(pendingMarker)\n  pendingMarker = null\n}\n\nvar newMarker = null\n// </markers utils>\n\nopen = $price.open \nhigh = $price.high\nlow = $price.low \nclose = $price.close \n\natr = options.mult * rma(Math.max(high - low, Math.max(Math.abs(high - close[1]), Math.abs(low - close[1]))), options.length)\nlongStop = (options.useClose ? highest(close, length) : highest(high, length)) - atr\n\nif (close[1] > longStop[1]) {\n  longStop = Math.max(longStop, longStop[1]) \n}\n\nshortStop = (options.useClose ? lowest(close, length) : lowest(low, length)) + atr\n\nif (close[1] < shortStop[1]) {\n  shortStop = Math.min(shortStop, shortStop[1]) \n}\n\nif (close > shortStop[1]) {\n  dir= 1\n}\nif (close < longStop[1]) {\n  dir= -1\n}\n\nvar ohlc4 =  (open + high + low + close) / 4\n\ncloudarea(dir == 1 ? {time: time, higherValue: ohlc4, lowerValue: longStop } : dir == -1 ? {time: time, higherValue: ohlc4, lowerValue: shortStop} : {time: time}, title=\"Stop\")\n\nif (dir == 1 && dir[1] == -1) {\n  newMarker = {\n    time: time,\n    position: 'belowBar',\n    color: options.longColor,\n    shape: 'arrowUp',\n    text: options.showLabels ? 'BUY' : undefined,\n    size: 1\n  }\n  \n  // alert for sell signal here\n} else if (dir == -1 && dir[1] == 1) {\n  newMarker = {\n    time: time,\n    position: 'aboveBar',\n    color: options.sellColor,\n    shape: 'arrowDown',\n    text: options.showLabels ? 'SELL' : undefined,\n    size: 1\n  }\n  \n  // alert for buy signal here\n}\n\n\n// <markers utils>\nif (newMarker || (pendingMarker && !newMarker)) {\n  pendingMarker = newMarker\n  \n  if (markers.length > 200) {\n    markers.splice(0, 1)\n  }\n  \n  if (series[0].setMarkers) {\n    series[0].setMarkers(markers.concat(pendingMarker))\n  }\n}\n// </markers utils>",
+    "createdAt": 1704890240682,
+    "updatedAt": 1762807691620,
+    "displayName": "Chandelier Exit",
+    "description": null,
+    "author": "asd"
+  }
+}
