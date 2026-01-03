@@ -1,0 +1,42 @@
+// --- Inputs / defaults (platformunda options panelinden veriyorsun)
+var price = $price
+
+// Source: HLC3 (senin örneğinle aynı)
+var src = (price.high + price.low + price.close) / 3
+
+var len   = options.length || 35          // CMA length
+var iters = options.iters  || 20          // Gain iterations (20 yeterli)
+
+// --- SMA (simple moving average)
+var sma = sum(src, len) / len
+
+// --- Variance: E[x^2] - (E[x])^2  (negatif olmasın)
+var ex2 = sum(Math.pow(src, 2), len) / len
+var v1  = ex2 - Math.pow(sma, 2)
+v1 = (v1 < 0 ? 0 : v1)
+
+// --- CMA state (önceki değer)
+// Bu DSL çoğunlukla series indexing destekler: cma[1]
+var cmaPrev = (typeof cma !== "undefined" && cma[1] != null) ? cma[1] : src
+
+// --- v2, v3
+var v2 = Math.pow(cmaPrev - sma, 2)
+
+var v3 = 1
+if (v1 !== 0 && v2 !== 0) {
+  v3 = v2 / (v1 + v2)
+}
+
+// --- Gain factor k (fixed iterations)
+var kPrev = 1
+var k = 1
+for (var i = 0; i < iters; i++) {
+  k = v3 * kPrev * (2 - kPrev)
+  kPrev = k
+}
+
+// --- CMA update (Everget core)
+var cma = cmaPrev + k * (sma - cmaPrev)
+
+// --- Outputs (plot etmeyi platform fonksiyonuyla sen bağla)
+// Örn: line(cma, color=options.cmaColor) / line(sma, color=options.smaColor)
