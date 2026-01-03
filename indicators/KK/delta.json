@@ -1,0 +1,31 @@
+{
+  "type": "indicator",
+  "name": "indicators:Delta",
+  "data": {
+    "options": {
+      "priceScaleId": "_dslqdepk4wz5ew88",
+      "upColor": "rgb(242,54,69)",
+      "downColor": "rgb(27,94,32)",
+      "color": "rgb(255,255,255)",
+      "priceFormat": {
+        "type": "volume",
+        "precision": 2,
+        "minMove": 0.01,
+        "auto": true
+      },
+      "scaleMargins": {
+        "top": 0.86,
+        "bottom": 0
+      },
+      "lastValueVisible": true,
+      "priceLineVisible": false,
+      "baseLineVisible": false
+    },
+    "script": "histogram({ time: time, value: Math.abs(vbuy-vsell)/1000000, color: vbuy - vsell > 0 ? options.upColor : options.downColor})",
+    "createdAt": 1767456187776,
+    "updatedAt": 1767456812744,
+    "displayName": "Delta",
+    "enabled": true,
+    "author": "KK"
+  }
+}
