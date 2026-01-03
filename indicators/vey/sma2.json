@@ -1,0 +1,16 @@
+{
+  "type": "indicator",
+  "name": "indicators:SMA",
+  "data": {
+    "options": {
+      "priceScaleId": "right"
+    },
+    "script": "// ===============================\n// EVERGET CMA - AGGREGATE SAFE\n// ===============================\n\nvar price = $price\nvar na = { time: time }\n\n// Source (istersen HLC3 yapabilirsin)\nvar src = price.close\n\n// Hafıza objesi (STATE YERİNE)\nif (typeof _mem === \"undefined\") _mem = {}\n\n// CMA hesap fonksiyonu (state-safe)\nfunction CMA(src, length, key) {\n\n  var sumSrc = sum(src, length)\n  var sumSrc2 = sum(Math.pow(src, 2), length)\n\n  if (sumSrc == null || sumSrc2 == null) return na\n\n  var sma = sumSrc / length\n\n  var ex2 = sumSrc2 / length\n  var v1 = ex2 - Math.pow(sma, 2)\n  if (v1 < 0) v1 = 0\n\n  if (_mem[key] == null) _mem[key] = src\n  var prev = _mem[key]\n\n  var v2 = Math.pow(prev - sma, 2)\n\n  var v3 = 1\n  if (v1 !== 0 && v2 !== 0) v3 = v2 / (v1 + v2)\n\n  // Gain factor\n  var kPrev = 1\n  var k = 1\n  for (var i = 0; i < 20; i++) {\n    k = v3 * kPrev * (2 - kPrev)\n    kPrev = k\n  }\n\n  var cma = prev + k * (sma - prev)\n  _mem[key] = cma\n\n  return cma\n}\n\n// ===============================\n// PLOT (SMA yerine CMA)\n// ===============================\n\nline(CMA(src, options.fastLength,   \"fast\"),   color = options.fastColor)\nline(CMA(src, options.mediumLength, \"medium\"), color = options.mediumColor)\nline(CMA(src, options.slowLength,   \"slow\"),   color = options.slowColor)",
+    "createdAt": 1623024000001,
+    "updatedAt": 1767453270516,
+    "displayName": "SMA",
+    "description": null,
+    "author": "vey",
+    "enabled": false
+  }
+}
