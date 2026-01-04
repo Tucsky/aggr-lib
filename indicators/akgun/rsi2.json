@@ -1,0 +1,21 @@
+{
+  "type": "indicator",
+  "name": "indicators:RSI",
+  "data": {
+    "options": {
+      "priceScaleId": "rsi",
+      "scaleMargins": {
+        "top": 0.01,
+        "bottom": 0.83
+      },
+      "color": "rgb(165,214,167)"
+    },
+    "script": "// rsi\nsrc(50) = $price.close\nvar change = src - src[1]\nvar up = ema(Math.max(change, 0), options.length)\nvar down = ema(-Math.min(change, 0), options.length)\nrsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))\nline(rsi)\nbrokenarea(options.thresholdUp, options.thresholdLow, color=options.thresholdColor)\n\nif (options.showDivs) {\n  // <markers utils>\n  if (markers === 0) {\n    markers = []\n  }\n  \n  if (pendingMarker && pendingMarker.time < time) {\n    markers.push(pendingMarker)\n    pendingMarker = null\n  }\n  \n  var newMarker = null\n  // </markers utils>\n  \n  // find long signals\n  pl = pivot_low(rsi, options.pivotLeftLength, options.pivotRightLength)\n  if (pl && pl !== _pl) {\n    var plsrc = src[options.pivotRightLength]\n    if (pl > _pl && plsrc < _plsrc && (pl < options.thresholdLow || _pl < options.thresholdLow)) {\n      newMarker = {\n        time: time - options.pivotRightLength * bar.timeframe,\n        position: 'belowBar',\n        text: '🔺',\n        size: 1\n      }\n    }\n    \n    _plsrc = plsrc\n    _pl = pl\n  }\n  \n  // find sell signals\n  ph = pivot_high(rsi, options.pivotLeftLength, options.pivotRightLength)\n  \n  if (ph && ph !== _ph) {\n    var phsrc = src[options.pivotRightLength]\n    if (ph < _ph && phsrc > _phsrc && (ph > options.thresholdUp || _ph > options.thresholdUp)) {\n      newMarker = {\n        time: time - options.pivotRightLength * bar.timeframe,\n        position: 'aboveBar',\n        text: '🔻',\n        size: 1\n      }\n    }\n    \n    _phsrc = phsrc\n    _ph = ph\n  }\n  \n  // <markers utils>\n  if (newMarker || (pendingMarker && !newMarker)) {\n    pendingMarker = newMarker\n    \n    if (markers.length > 200) {\n      markers.splice(0, 1)\n    }\n    \n    if (series[0].setMarkers) {\n      series[0].setMarkers(markers.concat(pendingMarker))\n    }\n  }\n  // </markers utils>\n}",
+    "createdAt": 1623024000001,
+    "updatedAt": 1752941282895,
+    "displayName": "RSI",
+    "description": null,
+    "author": "akgun",
+    "enabled": false
+  }
+}
