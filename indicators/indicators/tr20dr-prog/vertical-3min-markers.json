@@ -1,0 +1,20 @@
+{
+  "type": "indicator",
+  "name": "indicators:Vertical 3-min Markers",
+  "data": {
+    "id": "vertical-3min-markers",
+    "name": "Vertical 3-min Markers",
+    "options": {
+      "priceScaleId": "right",
+      "visible": true,
+      "lastValueVisible": false,
+      "priceLineVisible": false,
+      "baseLineVisible": false,
+      "markerColor": "rgba(255,255,255,0.35)"
+    },
+    "script": "var price = $price;\nvar is3min = (minute(time) % 3) === 0;\nif (is3min) {\n  // \"navpična črta\" = zelo ozek pas (širina 1 bara)\n  // preko celotne višine grafa\n  brokenarea(\n    price.close - price.close,\n    price.close + price.close,\n    color = (options.markerColor || \"rgba(255,255,255,0.35)\")\n  );\n}\n",
+    "displayName": "Vertical 3-min Markers",
+    "description": "Draws a subtle vertical marker every 3 minutes (implemented as a 1-bar-wide background stripe). Best used on 1m charts.",
+    "author": "tr20dr-prog"
+  }
+}
