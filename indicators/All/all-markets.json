@@ -1,0 +1,20 @@
+{
+  "type": "indicator",
+  "name": "indicators:All markets",
+  "data": {
+    "options": {
+      "priceScaleId": "right",
+      "scaleMargins": {
+        "top": 0.05,
+        "bottom": 0.25
+      }
+    },
+    "script": "line(BITFINEX:BTCUSD.close, color=#97c554, title=Bitfinex.spot)\nline(BINANCE:btcusdt.close, color=#f3ba2f, title=Binance.spot)\nline(OKEX:BTC-USDT.close, color=#5894f2, title=Okex.spot)\nline(KRAKEN:XBT/USD.close, color=#5841d8, title=Kraken.spot)\nline(COINBASE:BTC-USD.close, color=#0e70e2, title=Coinbase.spot)\nline(POLONIEX:BTC_USDT.close, color=#858b8f, title=Poloniex.spot)\nline(HUOBI:btcusdt.close, color=#2ca6e0, title=Huobi.spot)\nline(BITSTAMP:btcusd.close, color=#169f4a, title=Bitstamp.spot)",
+    "createdAt": 1623024000001,
+    "updatedAt": 1744474351762,
+    "displayName": "All markets",
+    "description": "Multiple markets at once",
+    "enabled": true,
+    "author": "All"
+  }
+}
