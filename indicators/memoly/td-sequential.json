@@ -1,0 +1,17 @@
+{
+  "type": "indicator",
+  "name": "indicators:TD Sequential",
+  "data": {
+    "options": {
+      "priceScaleId": "right",
+      "visible": true
+    },
+    "script": "// <STARTUP>\nif (!pendingMarkers) {\n  // runs only once\n  markers = []\n  pendingMarkers = []\n  lastIndex = null\n\n  upCount = 0\n  downCount = 0\n  upCountdown = 0\n  downCountdown = 0\n} else if (pendingMarkers.length) {\n  markers = markers.concat(pendingMarkers)\n  if (series[0].setMarkers) {\n    series[0].setMarkers(markers)\n  }\n  pendingMarkers = []\n}\nif (bar.length === lastIndex) {\n  // ignore same candle, only process previous candle on new candle\n  return\n}\n// </STARTUP>\n\ncandlestick($price, border = false, upColor = transparent, downColor = transparent, wickColor = transparent) // ghost price for markers\n\ntimes = time\nclose = $price.close\nhigh = $price.high\nlow = $price.low\n// only analyze bar once it's already printed\n// this why we offset everything by 1\nvar currentTime = times[1]\nvar currentClose = close[1]\nvar currentHigh = high[1]\nvar currentLow = low[1]\nvar closeCompare = close[5]\nvar highCompare = high[3]\nvar lowCompare = low[3]\n\nif (!downCountdown && !upCountdown) {\n  if (currentClose >= closeCompare) {\n    upCount = upCount + 1\n    downCount = 0\n\n    if (upCount === 9) {\n      pendingMarkers.push({\n        time: currentTime,\n        position: 'aboveBar',\n        color: 'red',\n        text: upCount.toString(),\n      })\n      upCount = 0\n      upCountdown = 1\n    }\n  } else if (currentClose <= closeCompare) {\n    downCount = downCount + 1\n    upCount = 0\n\n    if (downCount === 9) {\n      pendingMarkers.push({\n        time: currentTime,\n        position: 'belowBar',\n        color: 'red',\n        text: downCount.toString(),\n      })\n      downCount = 0\n      downCountdown = 1\n    }\n  }\n}\n\nif (upCountdown > 0) {\n  if (currentClose > highCompare) {\n    upCountdown = upCountdown + 1\n  }\n\n  if (upCountdown === 13) {\n    pendingMarkers.push({\n      time: currentTime,\n      position: 'aboveBar',\n      color: 'red',\n      text: '🔻',\n    })\n    upCountdown = 0\n  }\n} else if (downCountdown > 0) {\n  if (currentClose < lowCompare) {\n    downCountdown = downCountdown + 1\n  }\n\n  if (downCountdown === 13) {\n    pendingMarkers.push({\n      time: currentTime,\n      position: 'belowBar',\n      color: 'red',\n      text: '🔺',\n    })\n    downCountdown = 0\n  }\n}\n\nlastIndex = bar.length",
+    "createdAt": 1704939200431,
+    "updatedAt": 1738361744662,
+    "displayName": "TD Sequential",
+    "description": "Tom DeMark",
+    "author": "memoly",
+    "enabled": false
+  }
+}
