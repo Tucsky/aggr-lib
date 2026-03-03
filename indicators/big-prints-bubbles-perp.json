@@ -1,0 +1,13 @@
+{
+  "type": "indicator",
+  "name": "indicator:BIG PRINTS PERP",
+  "data": {
+    "createdAt": 1700000000000,
+    "description": "Detect large executed perp orders (USD threshold).",
+    "script": "buyVol = source(vbuy, type=perp)\nsellVol = source(vsell, type=perp)\n\np = $price.close\n\nbuyUsd = buyVol * p\nsellUsd = sellVol * p\n\nthreshold = options.threshold\n\nbigBuy = buyUsd >= threshold ? buyUsd : 0\nbigSell = sellUsd >= threshold ? -sellUsd : 0\n\nline(bigBuy, title=BigBuy, color=\"#00C853\")\nline(bigSell, title=BigSell, color=\"#D50000\")",
+    "options": {
+      "threshold": 250000,
+      "priceFormat": { "type": "volume" }
+    }
+  }
+}
