@@ -1,0 +1,20 @@
+{
+  "type": "indicator",
+  "name": "indicators:RSI MFI pairing",
+  "data": {
+    "options": {
+      "priceScaleId": "rsi_mfi_pairing",
+      "scaleMargins": {
+        "top": 0.68,
+        "bottom": 0.04
+      }
+    },
+    "script": "src(50) = $price.close\nvar change = src - src[1]\nvar up = ema(Math.max(change, 0), options.length)\nvar down = ema(-Math.min(change, 0), options.length)\nvar rsiValue = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))\ntypical(50) = ($price.high + $price.low + $price.close) / 3\nvar typicalChange = typical - typical[1]\nvar volume = vbuy + vsell\nvar positiveFlow = sum(volume * (typicalChange <= 0 ? 0 : typical), options.length)\nvar negativeFlow = sum(volume * (typicalChange >= 0 ? 0 : typical), options.length)\nvar mfiValue = !negativeFlow ? null : 100 - (100 / (1 + positiveFlow / negativeFlow))\nline(0, color=transparent)\nline(100, color=transparent)\nline(rsiValue, color=options.rsiColor, lineStyle=0)\nline(mfiValue, color=options.mfiColor, lineStyle=2)",
+    "createdAt": 1790613619045,
+    "updatedAt": 1790617274648,
+    "displayName": "RSI MFI pairing",
+    "description": "RSI and money flow index on one shared 0-100 scale. Shared configurable length defaults to 14. Solid white RSI; dashed white MFI.",
+    "enabled": false,
+    "author": "InstinctforJohn"
+  }
+}
