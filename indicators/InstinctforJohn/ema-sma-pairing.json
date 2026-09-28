@@ -1,0 +1,16 @@
+{
+  "type": "indicator",
+  "name": "indicators:EMA SMA pairing",
+  "data": {
+    "options": {
+      "priceScaleId": "right"
+    },
+    "script": "line(sma($price.close, options.fastLength), color=options.fastColor, lineStyle=0)\nline(ema($price.close, options.fastLength), color=options.fastColor, lineStyle=2)\nline(sma($price.close, options.mediumLength), color=options.mediumColor, lineStyle=0)\nline(ema($price.close, options.mediumLength), color=options.mediumColor, lineStyle=2)\nline(sma($price.close, options.slowLength), color=options.slowColor, lineStyle=0)\nline(ema($price.close, options.slowLength), color=options.slowColor, lineStyle=2)",
+    "createdAt": 1790605430082,
+    "updatedAt": 1790605679835,
+    "displayName": "EMA SMA pairing",
+    "description": "Three EMA and SMA pairs on the price chart, with matching periods. Solid SMA; dashed EMA.",
+    "author": "InstinctforJohn",
+    "enabled": false
+  }
+}
