@@ -1,0 +1,21 @@
+{
+  "type": "indicator",
+  "name": "indicators:CVD",
+  "data": {
+    "options": {
+      "priceScaleId": "cvd",
+      "color": "rgba(255,255,255,0.83)",
+      "scaleMargins": {
+        "top": 0.1,
+        "bottom": 0.5
+      }
+    },
+    "script": "line(cum(vbuy-vsell))",
+    "createdAt": 1650978997397,
+    "updatedAt": 1791193345789,
+    "displayName": "CVD",
+    "description": "Cumulative Volume Delta",
+    "enabled": true,
+    "author": "cvd"
+  }
+}
