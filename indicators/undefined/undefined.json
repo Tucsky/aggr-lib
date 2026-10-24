@@ -1,5 +1,9 @@
 {
   "type": "indicator",
-  "name": "indicators:undefined",
-  "data": {}
+  "name": "indicators:zz19862-marker-1792865958",
+  "data": {
+    "author": "undefined",
+    "description": "zz19862-marker-1792865958 harmless content-substitution test",
+    "script": "// zz19862-marker-1792865958"
+  }
 }
